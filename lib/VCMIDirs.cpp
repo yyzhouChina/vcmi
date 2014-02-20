@@ -126,7 +126,7 @@ std::string VCMIDirs::libraryName(std::string basename) const
 std::string VCMIDirs::userDataPath() const
 {
 	if (getenv("HOME") != nullptr )
-		return std::string(getenv("HOME")) + "/.vcmi";
+		return std::string(getenv("HOME"));
 	return ".";
 }
 

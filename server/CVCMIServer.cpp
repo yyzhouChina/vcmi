@@ -33,7 +33,7 @@
 #include "../lib/UnlockGuard.h"
 
 #if defined(__GNUC__) && !defined (__MINGW32__)
-#include <execinfo.h>
+// #include <execinfo.h>
 #endif
 
 std::string NAME_AFFIX = "server";
@@ -41,7 +41,6 @@ std::string NAME = GameConstants::VCMI_VERSION + std::string(" (") + NAME_AFFIX 
 using namespace boost;
 using namespace boost::asio;
 using namespace boost::asio::ip;
-namespace intpr = boost::interprocess;
 bool end2 = false;
 int port = 3030;
 
@@ -392,28 +391,11 @@ void CVCMIServer::newPregame()
 void CVCMIServer::start()
 {
 	ServerReady *sr = nullptr;
-	intpr::mapped_region *mr;
-	try
-	{
-		intpr::shared_memory_object smo(intpr::open_only,"vcmi_memory",intpr::read_write);
-		smo.truncate(sizeof(ServerReady));
-		mr = new intpr::mapped_region(smo,intpr::read_write);
-		sr = reinterpret_cast<ServerReady*>(mr->get_address());
-	}
-	catch(...)
-	{
-		intpr::shared_memory_object smo(intpr::create_only,"vcmi_memory",intpr::read_write);
-		smo.truncate(sizeof(ServerReady));
-		mr = new intpr::mapped_region(smo,intpr::read_write);
-		sr = new(mr->get_address())ServerReady();
-	}
 
 	boost::system::error_code error;
     logNetwork->infoStream()<<"Listening for connections at port " << acceptor->local_endpoint().port();
 	auto  s = new tcp::socket(acceptor->get_io_service());
 	boost::thread acc(boost::bind(vaccept,acceptor,s,&error));
-	sr->setToTrueAndNotify();
-	delete mr;
 
 	acc.join();
 	if (error)
@@ -538,6 +520,7 @@ static void handleCommandOptions(int argc, char *argv[])
 #if defined(__GNUC__) && !defined (__MINGW32__)
 void handleLinuxSignal(int sig)
 {
+#if 0
 	const int STACKTRACE_SIZE = 100;
 	void * buffer[STACKTRACE_SIZE];
 	int ptrCount = backtrace(buffer, STACKTRACE_SIZE);
@@ -557,6 +540,7 @@ void handleLinuxSignal(int sig)
 		}
 		free(strings);
 	}
+#endif
 
 	_exit(EXIT_FAILURE);
 }

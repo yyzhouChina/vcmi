@@ -37,7 +37,6 @@
 #include "CMT.h"
 
 extern std::string NAME;
-namespace intpr = boost::interprocess;
 
 /*
  * Client.cpp, part of VCMI engine
@@ -792,19 +791,13 @@ void CServerHandler::waitForServer()
 		startServer();
 
 	th.update();
-	intpr::scoped_lock<intpr::interprocess_mutex> slock(shared->sr->mutex);
-	while(!shared->sr->ready)
-	{
-		shared->sr->cond.wait(slock);
-	}
 	if(verbose)
         logNetwork->infoStream() << "Waiting for server: " << th.getDiff();
 }
 
 CConnection * CServerHandler::connectToServer()
 {
-	if(!shared->sr->ready)
-		waitForServer();
+	waitForServer();
 
 	th.update(); //put breakpoint here to attach to server before it does something stupid
 	CConnection *ret = justConnectToServer(settings["server"]["server"].String(), port);
@@ -818,20 +811,12 @@ CConnection * CServerHandler::connectToServer()
 CServerHandler::CServerHandler(bool runServer /*= false*/)
 {
 	serverThread = nullptr;
-	shared = nullptr;
 	port = boost::lexical_cast<std::string>(settings["server"]["port"].Float());
 	verbose = true;
-
-	boost::interprocess::shared_memory_object::remove("vcmi_memory"); //if the application has previously crashed, the memory may not have been removed. to avoid problems - try to destroy it
-	try
-	{
-		shared = new SharedMem();
-    } HANDLE_EXCEPTIONC(logNetwork->errorStream() << "Cannot open interprocess memory: ";)
 }
 
 CServerHandler::~CServerHandler()
 {
-	delete shared;
 	delete serverThread; //detaches, not kills thread
 }
 
@@ -840,6 +825,7 @@ void CServerHandler::callServer()
 	setThreadName("CServerHandler::callServer");
 	std::string logName = VCMIDirs::get().userCachePath() + "/server_log.txt";
 	std::string comm = VCMIDirs::get().serverPath() + " --port=" + port + " > " + logName;
+	setenv("LD_LIBRARY_PATH", "/data/data/is.xyz.vcmi/files/", 1);
 	int result = std::system(comm.c_str());
 	if (result == 0)
         logNetwork->infoStream() << "Server closed correctly";
