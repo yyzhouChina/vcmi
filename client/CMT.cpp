@@ -291,6 +291,10 @@ int main(int argc, char** argv)
 	logGlobal->infoStream() << "Creating console and configuring logger: " << pomtime.getDiff();
 	logGlobal->infoStream() << "The log file will be saved to " << logPath;
 
+#ifdef __ANDROID__
+	// boost will crash without this
+	setenv("LANG", "C", 1);
+#endif
     // Init filesystem and settings
 	preinitDLL(::console);
     settings.init();
@@ -368,8 +372,13 @@ int main(int argc, char** argv)
 
 
 
+#ifndef __ANDROID__
 	//we can properly play intro only in the main thread, so we have to move loading to the separate thread
 	boost::thread loading(init);
+#else
+	// on Android threaded init is broken
+	init();
+#endif
 
 	if(!gNoGUI )
 	{
@@ -379,7 +388,9 @@ int main(int argc, char** argv)
 	}
 
 	CSDL_Ext::update(screen);
+#ifndef __ANDROID__
 	loading.join();
+#endif
     logGlobal->infoStream()<<"Initialization of VCMI (together): "<<total.getDiff();
 
 	if(!vm.count("battle"))

@@ -158,11 +158,16 @@ std::string VCMIDirs::serverPath() const
 // $XDG_DATA_HOME, default: $HOME/.local/share
 std::string VCMIDirs::userDataPath() const
 {
+#ifdef __ANDROID__
+	// on Android HOME will be set to something like /sdcard/data/Android/is.xyz.vcmi/files/
+	return std::string(getenv("HOME"));
+#else
 	if (getenv("XDG_DATA_HOME") != nullptr )
 		return std::string(getenv("XDG_DATA_HOME")) + "/vcmi";
 	if (getenv("HOME") != nullptr )
 		return std::string(getenv("HOME")) + "/.local/share" + "/vcmi";
 	return ".";
+#endif
 }
 
 std::string VCMIDirs::userSavePath() const
