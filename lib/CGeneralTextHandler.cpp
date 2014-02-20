@@ -1,7 +1,7 @@
 #include "StdInc.h"
 #include "CGeneralTextHandler.h"
 
-#include <boost/locale.hpp>
+// #include <boost/locale.hpp>
 
 #include "filesystem/Filesystem.h"
 #include "CConfigHandler.h"
@@ -110,17 +110,20 @@ std::string Unicode::toUnicode(const std::string &text)
 
 std::string Unicode::toUnicode(const std::string &text, const std::string &encoding)
 {
-	return boost::locale::conv::to_utf<char>(text, encoding);
+	return text;
+	// TODO return boost::locale::conv::to_utf<char>(text, encoding);
 }
 
 std::string Unicode::fromUnicode(const std::string & text)
 {
-	return fromUnicode(text, getSelectedEncoding());
+	return text;
+	// TODO return fromUnicode(text, getSelectedEncoding());
 }
 
 std::string Unicode::fromUnicode(const std::string &text, const std::string &encoding)
 {
-	return boost::locale::conv::from_utf<char>(text, encoding);
+	return text;
+	// TODO return boost::locale::conv::from_utf<char>(text, encoding);
 }
 
 //Helper for string -> float conversion

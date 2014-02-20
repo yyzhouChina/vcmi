@@ -34,13 +34,14 @@ LibClasses * VLC = nullptr;
 
 DLL_LINKAGE void preinitDLL(CConsoleHandler *Console)
 {
+	std::cout << "called preinitDLL" << std::endl;
 	console = Console;
 	VLC = new LibClasses;
-	try
+	//try
 	{
 		VLC->loadFilesystem();
 	}
-	HANDLE_EXCEPTION;
+	//HANDLE_EXCEPTION;
 }
 
 DLL_LINKAGE void loadDLLClasses()

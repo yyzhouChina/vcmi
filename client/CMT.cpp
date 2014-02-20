@@ -52,6 +52,8 @@
 #undef main
 #endif
 
+#include <stdlib.h>
+
 namespace po = boost::program_options;
 
 /*
@@ -284,6 +286,7 @@ int main(int argc, char** argv)
     logConfig.configureDefault();
 	logGlobal->infoStream() <<"Creating console "<<pomtime.getDiff();
 
+	setenv("LANG", "C", 1);
     // Init filesystem and settings
 	preinitDLL(::console);
     settings.init();
@@ -361,7 +364,8 @@ int main(int argc, char** argv)
 
 
 	//we can properly play intro only in the main thread, so we have to move loading to the separate thread
-	boost::thread loading(init);
+	// boost::thread loading(init);
+	init();
 
 	if(!gNoGUI )
 	{
@@ -371,7 +375,7 @@ int main(int argc, char** argv)
 	}
 
 	CSDL_Ext::update(screen);
-	loading.join();
+	// loading.join();
     logGlobal->infoStream()<<"Initialization of VCMI (together): "<<total.getDiff();
 
 	if(!vm.count("battle"))

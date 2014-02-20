@@ -38,7 +38,9 @@ private:
 public:
 	CStopWatch th;
 	boost::thread *serverThread; //thread that called system to run server
+#if 0
 	SharedMem *shared; //interprocess memory (for waiting for server)
+#endif
 	bool verbose; //whether to print log msgs
 	std::string port; //port number in text form
 
