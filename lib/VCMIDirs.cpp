@@ -126,7 +126,12 @@ std::string VCMIDirs::libraryName(std::string basename) const
 std::string VCMIDirs::userDataPath() const
 {
 	if (getenv("HOME") != nullptr )
+#ifdef __ANDROID__
+		// on Android HOME will be set to something like /sdcard/data/Android/is.xyz.vcmi/files/
+		return std::string(getenv("HOME"));
+#else
 		return std::string(getenv("HOME")) + "/.vcmi";
+#endif
 	return ".";
 }
 
