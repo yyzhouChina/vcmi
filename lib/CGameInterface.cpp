@@ -22,7 +22,14 @@
  *
  */
 
+extern "C" DLL_EXPORT void VCAI_GetAiName(char* name);
+extern "C" DLL_EXPORT void VCAI_GetNewAI(shared_ptr<CGlobalAI> &out);
 
+extern "C" DLL_EXPORT void StupidAI_GetAiName(char* name);
+extern "C" DLL_EXPORT void StupidAI_GetNewBattleAI(shared_ptr<CGlobalAI> &out);
+
+extern "C" DLL_EXPORT void BattleAI_GetAiName(char* name);
+extern "C" DLL_EXPORT void BattleAI_GetNewBattleAI(shared_ptr<CBattleGameInterface> &out);
 
 template<typename rett>
 shared_ptr<rett> createAny(std::string dllname, std::string methodName)
@@ -34,6 +41,19 @@ shared_ptr<rett> createAny(std::string dllname, std::string methodName)
 
 	TGetAIFun getAI = nullptr;
 	TGetNameFun getName = nullptr;
+
+	// this is awful but it seems using shared libraries on some devices is even worse
+	if (dllname.find("libVCAI.so") != std::string::npos) {
+		getName = (TGetNameFun)VCAI_GetAiName;
+		getAI = (TGetAIFun)VCAI_GetNewAI;
+	} else if (dllname.find("libStupidAI.so") != std::string::npos) {
+		getName = (TGetNameFun)StupidAI_GetAiName;
+		getAI = (TGetAIFun)StupidAI_GetNewBattleAI;
+	} else if (dllname.find("libBattleAI.so") != std::string::npos) {
+		getName = (TGetNameFun)BattleAI_GetAiName;
+		getAI = (TGetAIFun)BattleAI_GetNewBattleAI;
+	}
+	else { // this WILL fail
 
 
 #ifdef _WIN32
@@ -67,6 +87,8 @@ shared_ptr<rett> createAny(std::string dllname, std::string methodName)
 		dlclose(dll);
 #endif
 		throw std::runtime_error("Cannot find method " + methodName);
+	}
+
 	}
 
 	getName(temp);

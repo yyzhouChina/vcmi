@@ -25,10 +25,12 @@
 #include "test.h"
 #include <iomanip>
 
+#if 0
 int main(int argc, char** argv) {
     FL_LOG(std::fixed << std::setprecision(3));
     fl::Test::main(argc, argv);
 
     return (EXIT_SUCCESS);
 }
+#endif
 
