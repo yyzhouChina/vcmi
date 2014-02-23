@@ -19,7 +19,7 @@
 #include "../lib/CBuildingHandler.h"
 #include "../lib/CSpellHandler.h"
 #include "../lib/Connection.h"
-#include "../lib/Interprocess.h"
+// #include "../lib/Interprocess.h"
 #include "../lib/NetPacks.h"
 #include "../lib/VCMI_Lib.h"
 #include "../lib/VCMIDirs.h"

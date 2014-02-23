@@ -19,7 +19,7 @@
 #include "CVCMIServer.h"
 #include "../lib/StartInfo.h"
 #include "../lib/mapping/CMap.h"
-#include "../lib/Interprocess.h"
+// #include "../lib/Interprocess.h"
 #include "../lib/VCMI_Lib.h"
 #include "../lib/VCMIDirs.h"
 #include "CGameHandler.h"
@@ -390,7 +390,7 @@ void CVCMIServer::newPregame()
 
 void CVCMIServer::start()
 {
-	ServerReady *sr = nullptr;
+	// ServerReady *sr = nullptr;
 
 	boost::system::error_code error;
     logNetwork->infoStream()<<"Listening for connections at port " << acceptor->local_endpoint().port();
